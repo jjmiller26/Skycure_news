@@ -1,4 +1,4 @@
 news_app
 ========
 
-Fake news iOS application
+Sample news iOS application
