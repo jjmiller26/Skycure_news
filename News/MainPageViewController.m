@@ -91,6 +91,27 @@
     }
 }
 
+- (NSString *)decodeHTMLEntities:(NSString *)string
+{
+    string = [string stringByReplacingOccurrencesOfString:@"+" withString:@" "];
+    string = [string stringByReplacingOccurrencesOfString:@"%22" withString:@"\""];
+    string = [string stringByReplacingOccurrencesOfString:@"%23" withString:@"#"];
+    string = [string stringByReplacingOccurrencesOfString:@"%26" withString:@"&"];
+    string = [string stringByReplacingOccurrencesOfString:@"%27" withString:@"'"];
+    string = [string stringByReplacingOccurrencesOfString:@"%28" withString:@"("];
+    string = [string stringByReplacingOccurrencesOfString:@"%29" withString:@")"];
+    string = [string stringByReplacingOccurrencesOfString:@"%2C" withString:@","];
+    string = [string stringByReplacingOccurrencesOfString:@"%2F" withString:@"/"];
+    string = [string stringByReplacingOccurrencesOfString:@"%3A" withString:@":"];
+    string = [string stringByReplacingOccurrencesOfString:@"%3B" withString:@";"];
+    string = [string stringByReplacingOccurrencesOfString:@"%3F" withString:@"?"];
+    string = [string stringByReplacingOccurrencesOfString:@"%40" withString:@"@"];
+    string = [string stringByReplacingOccurrencesOfString:@"&lt;" withString:@"<"];
+    string = [string stringByReplacingOccurrencesOfString:@"&gt;" withString:@">"];
+
+    return string;
+}
+
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
     @synchronized(self) {
@@ -103,10 +124,10 @@
             NSArray *jsonArticles = (NSArray *)json[@"articles"];
             NSMutableArray *articles = [NSMutableArray new];
             for (NSDictionary *article in jsonArticles) {
-                NSString *title = article[@"title"];
+                NSString *title = [self decodeHTMLEntities:article[@"title"]];
                 NSString *subtitle = article[@"subtitle"];
                 NSURL *image = article[@"image"] != NULL ? [NSURL URLWithString:article[@"image"]] : NULL;
-                NSString *content = article[@"content"];
+                NSString *content = [self decodeHTMLEntities:article[@"content"]];
                 [articles addObject:[[Article alloc] initWithTitle:title subtitle:subtitle image:image content:content]];
             }
             self.articles = articles;
